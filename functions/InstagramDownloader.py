@@ -5,11 +5,11 @@ import re
 import sys
 import urllib
 
-class InstagramDownloader(object):
+class InstagramProfileDownloader(object):
 	def __init__(self):
-		print "Initialized"
+		pass
 
-	def download(self,URL,outputFolder):
+	def download(self,URL,outputFolder,max):
 		#print "In get User Detail"
 		r = requests.get(
 		url=URL,
@@ -35,7 +35,10 @@ class InstagramDownloader(object):
 				num=num+1
 			hasNext=jsonData["page_info"]["has_next_page"]
 			cursor =jsonData["page_info"]["end_cursor"]
-			
+			if (max==0):
+				pass
+			elif (num>=max):
+				return
 			while (hasNext):
 				url= "https://www.instagram.com/graphql/query/?query_id=17888483320059182&variables={\"id\":\""+id+"\",\"first\":12,\"after\":\""+str(cursor)+"\"}"
 				r = requests.get(
@@ -55,26 +58,14 @@ class InstagramDownloader(object):
 						print "Error while saving file - Error Message : "+str(e)
 						return 
 					num=num+1
+				if(not num==0 and num>=max):
+					break
 
 
 			
 	
 
-	
 
-if __name__ == '__main__':
-	print len(sys.argv)
-	if(len(sys.argv)<3 or len(sys.argv)>3):
-		print "Incorrect Parameters\n please provide the following two parameters in order\nProfile URL\nOutput Foldername"
-	try:
-		url = str(sys.argv[1])
-		outputFolder=str(sys.argv[2])
-	except Exception as e:
-		print "Input Not provided Properly : "+ str(e) 
-
-	downloader = InstagramDownloader()
-	downloader.download(url,outputFolder)
-	
 
 	
 
